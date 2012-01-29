@@ -1,0 +1,27 @@
+* text=auto !eol
+/AUTHORS -text
+/COPYING -text
+/ChangeLog -text
+/Makefile.am -text
+/Makefile.in -text
+/NEWS -text
+/README -text
+/aclocal.m4 -text
+/apertium-lv-lg.lg-lv.lrx -text
+/apertium-lv-lg.lg-lv.rlx -text
+/apertium-lv-lg.lg-lv.t1x -text
+/apertium-lv-lg.lg.lexc -text
+/apertium-lv-lg.lg.twol -text
+/apertium-lv-lg.lv-lg.dix -text
+/apertium-lv-lg.lv-lg.lrx -text
+/apertium-lv-lg.lv-lg.rlx -text
+/apertium-lv-lg.lv-lg.t1x -text
+/apertium-lv-lg.lv.lexc -text
+/apertium-lv-lg.lv.lexc.old -text
+/apertium-lv-lg.lv.twol -text
+/autogen.sh -text
+/configure -text
+/configure.ac -text
+/lg-lv.prob -text svneol=unset#unset
+/lv-lg.prob -text svneol=unset#unset
+/modes.xml -text
