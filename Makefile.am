@@ -2,7 +2,6 @@
 ## Makefile for lv-lg
 ###############################################################################
 
-VERSION=0.1.0
 LANG1=lv
 LANG2=lg
 PREFIX1=$(LANG1)-$(LANG2)
@@ -14,23 +13,24 @@ TARGETS_COMMON = $(PREFIX1).autobil.bin $(PREFIX2).autobil.bin \
 	$(PREFIX1).automorf.hfst $(PREFIX1).autogen.hfst $(PREFIX1).t1x.bin  \
 	$(PREFIX2).automorf.hfst $(PREFIX2).autogen.hfst $(PREFIX2).t1x.bin  \
         $(PREFIX1).rlx.bin $(PREFIX2).rlx.bin \
-        $(PREFIX1).lrx.bin $(PREFIX2).lrx.bin \
-	$(PREFIX1).mode $(PREFIX2).mode modes 
+        $(PREFIX1).lrx.bin $(PREFIX2).lrx.bin
+
+@ap_include@
 
 ###############################################################################
 ## lv transducer
 ###############################################################################
 
 .deps/$(LANG1).twol.hfst: $(BASENAME).$(LANG1).twol
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	hfst-twolc $< -o $@
  
 .deps/$(LANG1).RL.lexc: $(BASENAME).$(LANG1).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/LR' > $@
  
 .deps/$(LANG1).LR.lexc: $(BASENAME).$(LANG1).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/RL' > $@
 
 .deps/$(LANG1).RL.lexc.hfst: .deps/$(LANG1).RL.lexc
@@ -56,15 +56,15 @@ $(PREFIX1).automorf.hfst: .deps/$(LANG1).LR.hfst
 ###############################################################################
 
 .deps/$(LANG2).twol.hfst: $(BASENAME).$(LANG2).twol
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	hfst-twolc $< -o $@
  
 .deps/$(LANG2).RL.lexc: $(BASENAME).$(LANG2).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/LR' > $@
  
 .deps/$(LANG2).LR.lexc: $(BASENAME).$(LANG2).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/RL' > $@
 
 .deps/$(LANG2).RL.lexc.hfst: .deps/$(LANG2).RL.lexc
@@ -90,13 +90,13 @@ $(PREFIX2).automorf.hfst: .deps/$(LANG2).LR.hfst
 ###############################################################################
 
 .deps/$(LANG1).LR-debug.hfst: $(BASENAME).$(LANG1).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/RL' | grep -v 'Use/Circ' > .deps/$(LANG1).LR-debug.lexc
 	hfst-lexc --format foma .deps/$(LANG1).LR-debug.lexc -o .deps/$(LANG1).LR-debug.lexc.hfst
 	hfst-compose-intersect -1 .deps/$(LANG1).LR-debug.lexc.hfst -2 .deps/$(LANG1).twol.hfst -o $@
 
 .deps/$(LANG2).LR-debug.hfst: $(BASENAME).$(LANG2).lexc
-	if [ ! -d .deps ]; then mkdir .deps; fi
+	if [ ! -d .deps ]; then $(MKDIR_P) .deps; fi
 	cat $< | grep -v 'Dir/RL' | grep -v 'Use/Circ' > .deps/$(LANG2).LR-debug.lexc
 	hfst-lexc --format foma .deps/$(LANG2).LR-debug.lexc -o .deps/$(LANG2).LR-debug.lexc.hfst
 	hfst-compose-intersect -1 .deps/$(LANG2).LR-debug.lexc.hfst -2 .deps/$(LANG2).twol.hfst -o $@
@@ -159,20 +159,6 @@ $(PREFIX2).t1x.bin: $(BASENAME).$(PREFIX2).t1x
 #	lt-comp lr $< $@
 
 ###############################################################################
-## Translation modes
-###############################################################################
-
-modes/$(PREFIX1).mode: modes.xml
-	apertium-validate-modes modes.xml
-	apertium-gen-modes modes.xml
-	cp *.mode modes/
-
-modes/$(PREFIX2).mode: modes.xml
-	apertium-validate-modes modes.xml
-	apertium-gen-modes modes.xml
-	cp *.mode modes/
-
-###############################################################################
 ## Installation stuff
 ###############################################################################
 
@@ -183,7 +169,6 @@ EXTRA_DIST=$(PREFIX1).prob $(PREFIX2).prob \
            $(BASENAME).$(PREFIX2).t1x \
            modes.xml
 
-apertium_lv_lgmodesdir=$(prefix)/share/apertium/modes/
 apertium_lv_lgdir=$(prefix)/share/apertium/$(BASENAME)/
 
 apertium_lv_lg_DATA=$(PREFIX1).autobil.bin $(PREFIX2).autobil.bin \
@@ -201,15 +186,7 @@ apertium_lv_lg_DATA=$(PREFIX1).autobil.bin $(PREFIX2).autobil.bin \
 noinst_DATA=modes/$(PREFIX1).mode modes/$(PREFIX2).mode
 
 
-install-data-local:
-	mv modes modes~
-	$(prefix)/bin/apertium-gen-modes modes.xml $(BASENAME)
-	rm -rf modes
-	mv modes~ modes
-	test -d $(DESTDIR)$(apertium_lv_lgmodesdir) || mkdir $(DESTDIR)$(apertium_lv_lgmodesdir)
-	$(INSTALL_DATA) $(PREFIX1).mode $(DESTDIR)$(apertium_lv_lgmodesdir)
-	rm $(PREFIX1).mode
-	rm $(PREFIX2).mode
+install-data-local: install-modes
 	$(INSTALL_DATA) $(BASENAME).$(PREFIX1).t1x $(DESTDIR)$(apertium_lv_lgdir)
 	$(INSTALL_DATA) $(BASENAME).$(PREFIX2).t1x $(DESTDIR)$(apertium_lv_lgdir)
 
