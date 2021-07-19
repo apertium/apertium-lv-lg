@@ -1,0 +1,10 @@
+{
+    "lg-lv": {
+        "input": "lg-lv-input.txt",
+        "mode": "lg-lv"
+    },
+    "lv-lg": {
+        "input": "lv-lg-input.txt",
+        "mode": "lv-lg"
+    }
+}

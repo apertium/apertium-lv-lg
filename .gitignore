@@ -21,3 +21,15 @@
 /lv-lg.t1x.bin
 /missing
 /modes
+/*.gz
+/*.m4
+/*.pc
+/*.zhfst
+/.DS_Store
+/Makefile.in
+/ap_include.am
+/configure
+/*-*.prob
+/config.in
+/config
+/test/*-output.txt
